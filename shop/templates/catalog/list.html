@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load variaty_tags %}
+
+{% block content %}
+
+
+
+  {% if filter %}
+    <div class="card mb-3">
+      <div class="card-header card-inverse card-primary">
+        <h2 class="mb-0">{{ title.title }}</h2>
+      </div>
+    </div>
+  {% else %}
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-4">
+          <div class="card-header">Shop Search</div>
+          <div class="card-block">
+            <form action="" method="GET">
+              <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                <input type="text" name="q" class="form-control form-control-lg" placeholder="Search products" value="{{ request.GET.q }}">
+              </div>
+            </form>
+            <br>
+            <a href="#">Advenced filter</a>
+            <!-- TODO : Create advenced search app -->
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-3">
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="mb-0">Categories</h4>
+          </div>
+          <div class="card-block">
+            {% show_category_list %}
+          </div>
+        </div> <!-- /.card -->
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">Brands</h4>
+          </div>
+          <div class="card-block">
+            {% show_brand_list %}
+          </div>
+        </div> <!-- /.card -->
+    </div>
+    <div class="col-md-9">
+      <div class="row">
+        {% for product in products %}
+          <div class="col-sm-6 col-md-4">
+            <div class="card mb-3">
+              <div class="card-header ">
+                {% if request.user.is_authenticated %}
+                  <div class="pull-left">
+                    <form action="
+                        {% if product.id in prod_ids_in_wishlist %}
+                          {% url 'products:remove_from_wishlist' product.id %}
+                        {% else %}
+                          {% url 'products:add_to_wishlist' product.id %}
+                        {% endif %}
+                      " method="post">
+                      {% csrf_token %}
+                      {{ addtowishlistform }}
+                      <button class="btn btn-sm btn-default" type="submit">
+                        {% if product.id in prod_ids_in_wishlist %}
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                        {% else %}
+                          <i class="fa fa-star-o" aria-hidden="true"></i>
+                        {% endif %}
+                      </button>
+                    </form>
+                  </div>
+                {% endif %}
+                <span class="pull-right" class="converse">{{ product.category }}</span>
+              </div>
+              <div class="card-block">
+                <a href="{{ product.get_absolute_url }}" ><img class="product-image" src="{{ product.cover_image.url }}" alt="pic" /></a>
+              </div>
+              <div class="card-block bottom">
+                <h3>{{ product.title }}</h3>
+                <div class="info"><strong>Brand: </strong> {{ product.brand }}</div>
+                {% if product.year %}
+                  <div class="info"><strong>Year:</strong> {{ product.year }}</div>
+                {% endif %}
+              </div>
+              <div class="card-footer">
+                <h4 class="pull-left mb-0">${{ product.price }}</h4>
+                {% if request.user.is_authenticated %}
+                  <form class="pull-right" action="{% url 'cart:cart_add' product.id %}" method="post">{% csrf_token %}
+                    <div class="form-group" style="display:none">
+                      {{ cart_product_form }}
+                    </div>
+                    <button class="btn btn-info btn-sm" type="submit">
+                      <i class="fa fa-shopping-basket" aria-hidden="true"></i>
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div> <!-- /.row -->
+    </div> <!-- /.col-md-9 -->
+  </div> <!-- /.row -->
+{% endblock %}

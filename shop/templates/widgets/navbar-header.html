@@ -1,0 +1,45 @@
+<nav class="navbar navbar-inverse bg-primary navbar-toggleable-md">
+  <div class="container">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleContainer" aria-controls="navbarsExampleContainer" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="/"><i style="font-size:30px;vertical-align:middle;" class="fa fa-bicycle" aria-hidden="true"></i> BuyBikeShop</a>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleContainer">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contacts</a></li>
+      </ul>
+      <ul class="navbar-nav">
+
+        {% with total_items=cart|length %}
+          {% if cart|length > 0 %}
+            <li class="nav-item">
+              <a class="nav-link" href='{% url "cart:cart_detail" %}'>
+                <i class="fa fa-shopping-cart mr-2" aria-hidden="true"></i>
+                {{ total_items }} item{{ total_items|pluralize }}, ${{ cart.get_total_price }}
+              </a>
+            </li>
+          {% endif %}
+        {% endwith %}
+
+        {% if not request.user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href='{% url "user:register" %}'><i class="fa fa-user-plus mr-2" aria-hidden="true"></i> Register</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}"><i class="fa fa-sign-in mr-2" aria-hidden="true"></i> Login</a></li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'user:user_panel' %}">
+              {% if request.user.is_authenticated %}
+                {% if extend_fields.userpic %}
+                  <div><img class="user_avatar mr-2" src="{{ extend_fields.userpic.url }}" alt=""></div>
+                {% endif %}
+              {% endif %}
+              {{ user.get_username }}
+            </a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

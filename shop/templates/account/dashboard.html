@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load variaty_tags %}
+
+{% block title %}
+  User dashboard
+{% endblock %}
+
+{% block content %}
+
+	<h2 class="mb-5">{{ user.username }}, personal panel</h2>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-5">
+        <div class="card-header">
+          <h3 class="mb-0">Personal inforamtion</h3>
+        </div>
+        <div class="card-block">
+          {% if userfileds.userpic %}
+            <div><img class="img-fluid mb-4" src="{{ userfileds.userpic.url }}" alt=""></div>
+          {% endif %}
+          <p><strong>User:</strong> {{ user.username }}</p>
+          <p><strong>id:</strong> {{ user.id }}</p>
+
+          {% if userfileds.age %}<p><strong>age:</strong> {{ userfileds.age }}</p>{% endif %}
+          {% if userfileds.bio %}<p><strong>bio:</strong> {{ userfileds.bio }}</p>{% endif %}
+          {% if userfileds.location %}<p><strong>bio:</strong> {{ userfileds.location }}</p>{% endif %}
+
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'user:update' %}">Edit user info</a>
+        </div>
+      </div> <!-- /.card -->
+    </div>
+    <div class="col-md-8">
+
+      <div class="card mb-5">
+        <div class="card-header">
+          <a href="{% url 'cart:cart_detail' %}"><h3 class="mb-0">Cart</h3></a>
+        </div>
+      </div>
+
+      <div class="card mb-5">
+        <div class="card-header">
+          <h3 class="mb-0">Notifications</h3>
+        </div>
+        <div class="card-block">
+          user notifications list ( about orders, already in for sale, new products and other stuff )
+        </div>
+      </div>
+
+      <!-- TODO : show only if have in wishlist -->
+      <div class="card mb-5">
+        <div class="card-header">
+          <h4 class="mb-0">Wishlist</h4>
+        </div>
+        <div class="card-block">
+          <table class="table table-default mb-0">
+            <thead class="thead-default">
+              <tr>
+                <th width="10px"><small>id</small></th>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Cost</th>
+                <th>Brand</th>
+                <th class="text-right">remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item, itemprod in wishlistarray %}
+                <tr>
+                  <td>{{ itemprod.id }}</td>
+                  <td>
+                    {% if itemprod.cover_image %}
+                      <img class="small-image" src="{{ itemprod.cover_image.url }}" alt="">
+                    {% endif %}
+                  </td>
+                  <td><a href="{{ itemprod.get_absolute_url }}">{{ item.item }}</a></td>
+                  <td>${{ itemprod.price }}</td>
+                  <td>{{ itemprod.brand }}</td>
+                  <td class="text-right">
+                      <form action="{% url 'products:remove_from_wishlist' itemprod.id %}" method="post">
+                        {% csrf_token %}
+                        {{ addtowishlistform }}
+                        <button class="btn btn-sm btn-default" type="submit">
+                            <i class="fa fa-remove" aria-hidden="true"></i>
+                        </button>
+                      </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <a href="#" class="btn btn-warning">Make order</a>
+        </div>
+      </div> <!-- /.card WISHLIST -->
+
+      <div class="card mb-5">
+        <div class="card-header">
+          <h3 class="mb-0">Orders history list</h3>
+        </div>
+        <div class="card-block">
+
+          <table class="table table-default mb-0">
+            <thead class="thead-default">
+              <tr>
+                <th width="10px">id</th>
+                <th>Order created</th>
+                <th>Total cost</th>
+                <!-- <th>Items</th> --> <!-- TODO : get count of items in order ( new field in model? ) -->
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+                <tr class="order_item">
+                  <td>{{ order.id }}</td>
+                  <td>{{ order.created  }}</td>
+                  <td>${{ order.get_total_cost }}</td>
+                  <!-- <td></td> -->
+                  <td>
+                    <a class="btn btn-sm btn-info" href="{{ order.get_absolute_url }}">detail</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+      </div> <!-- /.row -->
+    </div>
+  </div>
+
+{% endblock %}

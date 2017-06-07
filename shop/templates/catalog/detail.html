@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ product.title }} | {{ product.brand }} | {{ product.category }}
+{% endblock %}
+
+{% block content %}
+
+
+<div class="row mb-5">
+  <div class="col-md-6 item-photo">
+    <img class="img-fluid" src="{{ product.cover_image.url }}" />
+  </div>
+  <div class="col-md-6" >
+    <h1>{{ product.title }}</h1>
+    <!-- <h5> <a href="#">Samsung</a> · <small style="color:#337ab7">(5054 ventas)</small></h5> -->
+    <h6 class="title-price"><strong>Price</strong></h6>
+    <h4>US {{ product.price }}</h4>
+    <div class="mb-2">
+      <div class="title-attr">Category: <span class="badge badge-primary">{{ product.category }}</span></div>
+    </div>
+    <div class="mb-2">
+      <div class="title-attr">Brand: <span class="badge badge-primary">{{ product.brand }}</span></div>
+    </div>
+    <div class="section">
+      {% if request.user.is_authenticated %}
+        <form action="{% url 'cart:cart_add' product.id %}" method="post" style="max-width: 200px;">{% csrf_token %}
+          <div class="form-group">
+      			{{ cart_product_form }}
+          </div>
+          <div class="form-group">
+            <input class="btn btn-info" type="submit" value="Add to cart">
+          </div>
+    		</form>
+      {% endif %}
+    </div>
+  </div>
+
+</div> <!-- /.row -->
+
+<div class="product-details">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" href="#Detail" role="tab" data-toggle="tab">Details</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#Feedbacks" role="tab" data-toggle="tab">Feedbacks</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane fade in active show" id="Detail" aria-expanded="true">
+      <div class="card-block">
+        <p>{{ product.content }}</p>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane fade" id="Feedbacks">
+
+      {% if commentitems %}
+        <div class="card mb-5">
+          <div class="card-block">
+              {% for comment, user in commentitems %}
+                <div class="media">
+                  <div><img class="d-flex mr-3 comment-image" src="{{ user.userpic.url }}" alt=""></div>
+                  <div class="media-body">
+                    <h5 class="mt-0">{{ comment.user }}</h5>
+                    {{ comment.content }}
+                    <p><small>{{ comment.timestamp|timesince }} ago</small></p>
+                  </div>
+                </div>
+                <hr>
+              {% endfor %}
+          </div>
+        </div> <!-- /.card -->
+      {% else %}
+        <p>there are no comments here :(</p>
+        <p>Be the first!</p>
+      {% endif %}
+
+      {% if request.user.is_authenticated %}
+        <div class="card mb-4">
+          <div class="card-header">Leave a comment</div>
+          <div class="card-block">
+            <form method="POST" action="."> {% csrf_token %}
+              <div class="form-group">
+                {{ comment_form }}
+              </div>
+              <div class="form-group">
+                <input type='submit' value='Post comment' class='btn btn-info'>
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div> <!-- /.product-details -->
+{% endblock %}

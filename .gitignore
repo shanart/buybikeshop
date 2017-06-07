@@ -1,0 +1,11 @@
+/Include
+/Lib
+/Scripts
+/tcl
+/tm
+
+*.egg-info
+*.pot
+*.py[co]
+.tox/
+__pycache__

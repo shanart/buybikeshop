@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Checkout
+{% endblock %}
+
+{% block content %}
+  <h1>Checkout</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="order-info">
+        <h3>Your order</h3>
+        <ul>
+          {% for item in cart %}
+          <li>
+            <div>{{ item.quantity }}x {{ item.product.title }}</div>
+            <span>${{ item.total_price }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        <p>Total: ${{ cart.get_total_price }}</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <form action="." method="post" class="order-form">
+        {% for input in form %}
+          <div class="form-group">
+            {{ input }}
+          </div>
+        {% endfor %}
+        <div class="form-group">
+          <input type="submit" class="btn btn-danger" value="Place order">
+        </div>
+        {% csrf_token %}
+      </form>
+    </div>
+  </div> <!-- /.row -->
+{% endblock %}

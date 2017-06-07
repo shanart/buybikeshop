@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load variaty_tags %}
+
+{% block title %}
+  update
+{% endblock %}
+
+{% block content %}
+
+  <form  method='POST' action='' enctype='multipart/form-data'>{% csrf_token %}
+    {% for input in profile_form %}
+      <div class="form-group">
+        {{ input }}
+      </div>
+    {% endfor %}
+    {% for input in form %}
+      <div class="form-group">
+        {{ input }}
+      </div>
+    {% endfor %}
+    <div class="form-group">
+      <input type='submit' class='btn btn-info' value='Update' />
+    </div>
+  </form>
+
+{% endblock %}
